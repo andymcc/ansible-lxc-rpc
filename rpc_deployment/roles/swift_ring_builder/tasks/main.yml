@@ -32,6 +32,21 @@
     dest="/etc/swift/scripts/swift_rings.py"
     mode=0700
 
+- name: "Build ring-contents files"
+  template: >
+    src=ring_contents.j2
+    dest="/etc/swift/scripts/{{ item }}.contents"
+  with_items:
+    - account
+    - container
+
+- name: "Build ring-contents files for storage policies"
+  template: >
+    src=ring_contents.j2
+    dest="/etc/swift/scripts/object-{{ item.policy.index }}.contents"
+  with_items:
+    - {{ swift.storage_policies }}
+
 - name: "build rings"
   command: /usr/bin/python /etc/swift/scripts/swift_rings.py -s /etc/rpc_deploy/rpc_inventory.json
   args:
